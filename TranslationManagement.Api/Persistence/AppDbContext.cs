@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TranslationManagement.Api.Controlers;
-using TranslationManagement.Api.Controllers;
+using TranslationManagement.Api.Jobs;
+using TranslationManagement.Api.Translators;
 
-namespace TranslationManagement.Api;
+namespace TranslationManagement.Api.Persistence;
 
 public class AppDbContext : DbContext
 {

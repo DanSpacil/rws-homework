@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using TranslationManagement.Api.Persistence;
 
-namespace TranslationManagement.Api.Controlers;
+namespace TranslationManagement.Api.Translators;
 
 [ApiController]
 [Route("api/TranslatorsManagement/[action]")]

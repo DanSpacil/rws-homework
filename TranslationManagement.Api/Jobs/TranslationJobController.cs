@@ -7,9 +7,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using TranslationManagement.Api.Controlers;
+using TranslationManagement.Api.Persistence;
+using TranslationManagement.Api.Translators;
 
-namespace TranslationManagement.Api.Controllers;
+namespace TranslationManagement.Api.Jobs;
 
 [ApiController]
 [Route("api/jobs/[action]")]
