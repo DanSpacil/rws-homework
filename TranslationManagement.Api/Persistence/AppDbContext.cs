@@ -11,5 +11,5 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<TranslationJobController.TranslationJob> TranslationJobs { get; set; }
-    public DbSet<TranslatorManagementController.TranslatorModel> Translators { get; set; }
+    public DbSet<TranslatorModel> Translators { get; set; }
 }
