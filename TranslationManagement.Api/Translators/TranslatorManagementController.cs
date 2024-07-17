@@ -50,7 +50,7 @@ public class TranslatorManagementController : ControllerBase
     }
 
     [HttpPost]
-    public string UpdateTranslatorStatus(int Translator, string newStatus = "")
+    public async Task<string> UpdateTranslatorStatus(int Translator, string newStatus = "")
     {
         _logger.LogInformation("User status update request: " + newStatus + " for user " + Translator.ToString());
         if (TranslatorStatuses.Where(status => status == newStatus).Count() == 0)
@@ -58,10 +58,7 @@ public class TranslatorManagementController : ControllerBase
             throw new ArgumentException("unknown status");
         }
 
-        var job = _context.Translators.Single(j => j.Id == Translator);
-        job.Status = newStatus;
-        _context.SaveChanges();
-
+        await _translatorService.UpdateTranslatorStatus(Translator, newStatus);
         return "updated";
     }
 }

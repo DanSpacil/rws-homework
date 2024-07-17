@@ -10,4 +10,6 @@ public interface ITranslatorService
     Task<ICollection<TranslatorModel>> GetByName(string name);
 
     Task<bool> AddTranslator(TranslatorModel translator);
+
+    Task UpdateTranslatorStatus(int translator, string newStatus);
 }

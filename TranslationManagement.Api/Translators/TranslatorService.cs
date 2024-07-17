@@ -30,4 +30,11 @@ public class TranslatorService : ITranslatorService
         await _appContext.AddAsync(translator);
         return await _appContext.SaveChangesAsync() > 0;
     }
+
+    public async Task UpdateTranslatorStatus(int translator, string newStatus)
+    {
+        var job = _appContext.Translators.Single(j => j.Id == translator);
+        job.Status = newStatus;
+        await _appContext.SaveChangesAsync();
+    }
 }
