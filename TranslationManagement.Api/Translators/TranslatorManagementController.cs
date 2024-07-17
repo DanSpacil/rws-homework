@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -16,16 +17,22 @@ public class TranslatorManagementController : ControllerBase
     private readonly ILogger<TranslatorManagementController> _logger;
     private AppDbContext _context;
 
-    public TranslatorManagementController(IServiceScopeFactory scopeFactory, ILogger<TranslatorManagementController> logger)
+    private readonly ITranslatorService _translatorService;
+    private readonly TranslatorMapper _translatorMapper;
+
+    public TranslatorManagementController(IServiceScopeFactory scopeFactory, ILogger<TranslatorManagementController> logger, ITranslatorService translatorService, TranslatorMapper translatorMapper)
     {
         _context = scopeFactory.CreateScope().ServiceProvider.GetService<AppDbContext>();
         _logger = logger;
+        _translatorService = translatorService;
+        _translatorMapper = translatorMapper;
     }
 
     [HttpGet]
-    public TranslatorModel[] GetTranslators()
+    public async Task<IActionResult> GetTranslators()
     {
-        return _context.Translators.ToArray();
+        var translators = await _translatorService.GetAllTranslators();
+        return this.Ok(_translatorMapper.Map(translators));
     }
 
     [HttpGet]
