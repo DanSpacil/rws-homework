@@ -16,23 +16,6 @@ namespace TranslationManagement.Api.Jobs;
 [Route("api/jobs/[action]")]
 public class TranslationJobController : ControllerBase
 {
-    public class TranslationJob
-    {
-        public int Id { get; set; }
-        public string CustomerName { get; set; }
-        public string Status { get; set; }
-        public string OriginalContent { get; set; }
-        public string TranslatedContent { get; set; }
-        public double Price { get; set; }
-    }
-
-    static class JobStatuses
-    {
-        internal static readonly string New = "New";
-        internal static readonly string Inprogress = "InProgress";
-        internal static readonly string Completed = "Completed";
-    }
-
     private AppDbContext _context;
     private readonly ILogger<TranslatorManagementController> _logger;
 
@@ -49,6 +32,7 @@ public class TranslationJobController : ControllerBase
     }
 
     const double PricePerCharacter = 0.01;
+
     private void SetPrice(TranslationJob job)
     {
         job.Price = job.OriginalContent.Length * PricePerCharacter;
@@ -95,12 +79,7 @@ public class TranslationJobController : ControllerBase
             throw new NotSupportedException("unsupported file");
         }
 
-        var newJob = new TranslationJob()
-        {
-            OriginalContent = content,
-            TranslatedContent = "",
-            CustomerName = customer,
-        };
+        var newJob = new TranslationJob() { OriginalContent = content, TranslatedContent = "", CustomerName = customer, };
 
         SetPrice(newJob);
 
