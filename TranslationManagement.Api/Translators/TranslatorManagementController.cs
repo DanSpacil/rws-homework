@@ -43,10 +43,10 @@ public class TranslatorManagementController : ControllerBase
     }
 
     [HttpPost]
-    public bool AddTranslator(TranslatorModel translator)
+    public async Task<bool> AddTranslator(TranslatorModel translator)
     {
-        _context.Translators.Add(translator);
-        return _context.SaveChanges() > 0;
+        var translatorAdded = await _translatorService.AddTranslator(translator);
+        return translatorAdded;
     }
 
     [HttpPost]

@@ -24,4 +24,10 @@ public class TranslatorService : ITranslatorService
     {
         return await _appContext.Translators.Where(t => t.Name == name).ToListAsync();
     }
+
+    public async Task<bool> AddTranslator(TranslatorModel translator)
+    {
+        await _appContext.AddAsync(translator);
+        return await _appContext.SaveChangesAsync() > 0;
+    }
 }

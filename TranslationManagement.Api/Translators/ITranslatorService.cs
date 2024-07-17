@@ -8,4 +8,6 @@ public interface ITranslatorService
     Task<ICollection<TranslatorModel>> GetAllTranslators();
 
     Task<ICollection<TranslatorModel>> GetByName(string name);
+
+    Task<bool> AddTranslator(TranslatorModel translator);
 }
