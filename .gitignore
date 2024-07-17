@@ -482,3 +482,9 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+
+# Project DB files
+TranslationAppDatabase.db
+TranslationAppDatabase.db-shm
+TranslationAppDatabase.db-wal
