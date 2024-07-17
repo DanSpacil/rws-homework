@@ -6,4 +6,6 @@ namespace TranslationManagement.Api.Translators;
 public interface ITranslatorService
 {
     Task<ICollection<TranslatorModel>> GetAllTranslators();
+
+    Task<ICollection<TranslatorModel>> GetByName(string name);
 }

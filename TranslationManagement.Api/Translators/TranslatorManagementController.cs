@@ -36,9 +36,10 @@ public class TranslatorManagementController : ControllerBase
     }
 
     [HttpGet]
-    public TranslatorModel[] GetTranslatorsByName(string name)
+    public async Task<IActionResult> GetTranslatorsByName(string name)
     {
-        return _context.Translators.Where(t => t.Name == name).ToArray();
+        var translators = await _translatorService.GetByName(name);
+        return this.Ok(_translatorMapper.Map(translators));
     }
 
     [HttpPost]
