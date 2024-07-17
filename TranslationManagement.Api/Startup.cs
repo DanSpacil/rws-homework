@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
+using TranslationManagement.Api.Jobs;
 using TranslationManagement.Api.Persistence;
 using TranslationManagement.Api.Translators;
 
@@ -30,6 +31,7 @@ public class Startup
             options.UseSqlite("Data Source=TranslationAppDatabase.db"));
 
         services.AddTranslators();
+        services.AddTranslationJobs();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

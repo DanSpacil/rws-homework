@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using External.ThirdParty.Services;
 using Microsoft.AspNetCore.Http;
@@ -18,17 +19,22 @@ public class TranslationJobController : ControllerBase
 {
     private AppDbContext _context;
     private readonly ILogger<TranslatorManagementController> _logger;
+    private readonly ITranslationJobService _translationJobService;
+    private readonly TranslationJobMapper _translationJobMapper;
 
-    public TranslationJobController(IServiceScopeFactory scopeFactory, ILogger<TranslatorManagementController> logger)
+    public TranslationJobController(IServiceScopeFactory scopeFactory, ILogger<TranslatorManagementController> logger, ITranslationJobService translationJobService, TranslationJobMapper translationJobMapper)
     {
         _context = scopeFactory.CreateScope().ServiceProvider.GetService<AppDbContext>();
         _logger = logger;
+        _translationJobService = translationJobService;
+        _translationJobMapper = translationJobMapper;
     }
 
     [HttpGet]
-    public TranslationJob[] GetJobs()
+    public async Task<IActionResult> GetJobs()
     {
-        return _context.TranslationJobs.ToArray();
+        var jobs = await _translationJobService.GetAll();
+        return Ok(_translationJobMapper.Map(jobs));
     }
 
     const double PricePerCharacter = 0.01;
