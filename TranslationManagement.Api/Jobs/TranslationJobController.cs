@@ -1,14 +1,11 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using External.ThirdParty.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using TranslationManagement.Api.Persistence;
 using TranslationManagement.Api.Translators;
 
 namespace TranslationManagement.Api.Jobs;
@@ -17,14 +14,12 @@ namespace TranslationManagement.Api.Jobs;
 [Route("api/jobs/[action]")]
 public class TranslationJobController : ControllerBase
 {
-    private AppDbContext _context;
     private readonly ILogger<TranslatorManagementController> _logger;
     private readonly ITranslationJobService _translationJobService;
     private readonly TranslationJobMapper _translationJobMapper;
 
-    public TranslationJobController(IServiceScopeFactory scopeFactory, ILogger<TranslatorManagementController> logger, ITranslationJobService translationJobService, TranslationJobMapper translationJobMapper)
+    public TranslationJobController(ILogger<TranslatorManagementController> logger, ITranslationJobService translationJobService, TranslationJobMapper translationJobMapper)
     {
-        _context = scopeFactory.CreateScope().ServiceProvider.GetService<AppDbContext>();
         _logger = logger;
         _translationJobService = translationJobService;
         _translationJobMapper = translationJobMapper;
@@ -37,35 +32,25 @@ public class TranslationJobController : ControllerBase
         return Ok(_translationJobMapper.Map(jobs));
     }
 
-    const double PricePerCharacter = 0.01;
-
-    private void SetPrice(TranslationJob job)
-    {
-        job.Price = job.OriginalContent.Length * PricePerCharacter;
-    }
-
     [HttpPost]
-    public bool CreateJob(TranslationJob job)
+    public async Task<OkObjectResult> CreateJob(CreateJobRequest createJobRequest)
     {
-        job.Status = "New";
-        SetPrice(job);
-        _context.TranslationJobs.Add(job);
-        var success = _context.SaveChanges() > 0;
-        if (success)
+        var createJobResult = await _translationJobService.CreateJob(new CreateJobCommand(createJobRequest.CustomerName, createJobRequest.OriginalContent));
+        if (createJobResult.IsSuccess)
         {
             var notificationSvc = new UnreliableNotificationService();
-            while (!notificationSvc.SendNotification("Job created: " + job.Id).Result)
+            while (!notificationSvc.SendNotification("Job created: " + createJobResult.JobId).Result)
             {
             }
 
             _logger.LogInformation("New job notification sent");
         }
 
-        return success;
+        return Ok(createJobResult.IsSuccess);
     }
 
     [HttpPost]
-    public bool CreateJobWithFile(IFormFile file, string customer)
+    public async Task<OkObjectResult> CreateJobWithFile(IFormFile file, string customer)
     {
         var reader = new StreamReader(file.OpenReadStream());
         string content;
@@ -85,33 +70,26 @@ public class TranslationJobController : ControllerBase
             throw new NotSupportedException("unsupported file");
         }
 
-        var newJob = new TranslationJob() { OriginalContent = content, TranslatedContent = "", CustomerName = customer, };
+        var createJobResult = await _translationJobService.CreateJob(new CreateJobCommand(customer, content));
 
-        SetPrice(newJob);
-
-        return CreateJob(newJob);
+        return Ok(createJobResult.IsSuccess);
     }
 
     [HttpPost]
-    public string UpdateJobStatus(int jobId, int translatorId, string newStatus = "")
+    public async Task<string> UpdateJobStatus(int jobId, int translatorId, JobStatus newStatus)
     {
         _logger.LogInformation("Job status update request received: " + newStatus + " for job " + jobId.ToString() + " by translator " + translatorId);
-        if (typeof(JobStatuses).GetProperties().Count(prop => prop.Name == newStatus) == 0)
-        {
-            return "invalid status";
-        }
-
-        var job = _context.TranslationJobs.Single(j => j.Id == jobId);
-
-        var isInvalidStatusChange = (job.Status == JobStatuses.New && newStatus == JobStatuses.Completed) ||
-                                    job.Status == JobStatuses.Completed || newStatus == JobStatuses.New;
-        if (isInvalidStatusChange)
-        {
-            return "invalid status change";
-        }
-
-        job.Status = newStatus;
-        _context.SaveChanges();
-        return "updated";
+        // if (typeof(JobStatuses).GetProperties().Count(prop => prop.Name == newStatus) == 0)
+        // {
+        //     return "invalid status";
+        // }
+        var updateResult = await this._translationJobService.UpdateJobStatus(new JobStatusUpdateCommand(jobId, newStatus));
+        return updateResult.IsUpdated ? "update" : "invalid status";
     }
+}
+
+public class CreateJobRequest
+{
+    public string CustomerName { get; set; }
+    public string OriginalContent { get; set; }
 }

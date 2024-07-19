@@ -14,6 +14,33 @@ public class TranslationJob
     {
         this.Price = this.OriginalContent.Length * pricePerCharacter;
     }
+
+    public JobStatusUpdateResult UpdateStatus(JobStatus newStatus)
+    {
+        if ((this.Status == JobStatus.New && newStatus == JobStatus.Completed) ||
+            this.Status == JobStatus.Completed ||
+            newStatus == JobStatus.New)
+        {
+            return JobStatusUpdateResult.Invalid();
+        }
+
+        this.Status = newStatus;
+        return JobStatusUpdateResult.Success();
+    }
+}
+
+public class JobStatusUpdateResult
+{
+    private JobStatusUpdateResult(bool isUpdated)
+    {
+        IsUpdated = isUpdated;
+    }
+
+    public bool IsUpdated { get; }
+    public static JobStatusUpdateResult Invalid() => new(false);
+
+    public static JobStatusUpdateResult Success() => new(true);
+
 }
 
 public enum JobStatus
