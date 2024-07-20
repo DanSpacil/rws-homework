@@ -10,12 +10,12 @@ namespace TranslationManagement.Api.Jobs;
 
 public class TranslationJobController : ApiController
 {
-    private readonly ILogger<TranslatorManagementController> _logger;
+    private readonly ILogger<TranslatorController> _logger;
     private readonly ITranslationJobService _translationJobService;
     private readonly TranslationJobMapper _translationJobMapper;
     private readonly IFileParsingProvider _jobParsingProvider;
 
-    public TranslationJobController(ILogger<TranslatorManagementController> logger, ITranslationJobService translationJobService, TranslationJobMapper translationJobMapper, IFileParsingProvider jobParsingProvider)
+    public TranslationJobController(ILogger<TranslatorController> logger, ITranslationJobService translationJobService, TranslationJobMapper translationJobMapper, IFileParsingProvider jobParsingProvider)
     {
         _logger = logger;
         _translationJobService = translationJobService;
@@ -31,7 +31,7 @@ public class TranslationJobController : ApiController
     }
 
     [HttpPost]
-    public async Task<OkObjectResult> CreateJob(CreateJobRequest createJobRequest)
+    public async Task<IActionResult> CreateJob(CreateJobRequest createJobRequest)
     {
         var createJobResult = await _translationJobService.CreateJob(new CreateJobCommand(createJobRequest.CustomerName, createJobRequest.OriginalContent));
         return Ok(createJobResult.IsSuccess);
@@ -50,14 +50,10 @@ public class TranslationJobController : ApiController
     }
 
     [HttpPost]
-    public async Task<string> UpdateJobStatus(int jobId, int translatorId, JobStatus newStatus)
+    public async Task<IActionResult> UpdateJobStatus(int jobId, int translatorId, JobStatus newStatus)
     {
-        _logger.LogInformation("Job status update request received: " + newStatus + " for job " + jobId.ToString() + " by translator " + translatorId);
-        // if (typeof(JobStatuses).GetProperties().Count(prop => prop.Name == newStatus) == 0)
-        // {
-        //     return "invalid status";
-        // }
+        _logger.LogInformation("Job status update request received: {NewJobStatus} for job {JobId} by translator {TranslatorId}", newStatus, jobId, translatorId);
         var updateResult = await this._translationJobService.UpdateJobStatus(new JobStatusUpdateCommand(jobId, newStatus));
-        return updateResult.IsUpdated ? "update" : "invalid status";
+        return updateResult.IsUpdated ? Ok("update") : BadRequest("invalid status");
     }
 }

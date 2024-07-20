@@ -33,7 +33,7 @@ public class ReliableNotifier : INotifier
             }
             catch (ApplicationException e)
             {
-                _logger.LogTrace("Unreliable service failed with exception {@Exception}", e);
+                _logger.LogTrace("Unreliable service failed with exception {Exception}", e);
             }
         }
     }

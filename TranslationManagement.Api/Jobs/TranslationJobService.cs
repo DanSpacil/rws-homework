@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TranslationManagement.Api.Notifications;
@@ -63,27 +62,3 @@ public class TranslationJobService : ITranslationJobService
         return updateResult;
     }
 }
-
-public record JobStatusUpdateCommand(int JobId, JobStatus NewStatus);
-
-public class JobCreatedResult
-{
-    private JobCreatedResult() { }
-
-    [MemberNotNullWhen(true, nameof(IsSuccess))]
-    public int? JobId { get; private init; }
-
-    public bool IsSuccess { get; private init; }
-
-    public static JobCreatedResult Success(int jobId)
-    {
-        return new JobCreatedResult { IsSuccess = true, JobId = jobId };
-    }
-
-    public static JobCreatedResult Error()
-    {
-        return new JobCreatedResult { IsSuccess = true };
-    }
-}
-
-public record CreateJobCommand(string CustomerName, string OriginalContent);
