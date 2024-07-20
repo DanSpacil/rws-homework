@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
+using TranslationManagement.Api.FileParsing;
 using TranslationManagement.Api.Jobs;
 using TranslationManagement.Api.Notifications;
 using TranslationManagement.Api.Persistence;
@@ -34,6 +35,7 @@ public class Startup
         services.AddTranslators();
         services.AddTranslationJobs();
         services.AddNotifications();
+        services.AddFileParsing();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

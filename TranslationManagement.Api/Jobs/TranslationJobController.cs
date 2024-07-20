@@ -6,6 +6,7 @@ using External.ThirdParty.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using TranslationManagement.Api.FileParsing;
 using TranslationManagement.Api.Translators;
 
 namespace TranslationManagement.Api.Jobs;
@@ -17,12 +18,14 @@ public class TranslationJobController : ControllerBase
     private readonly ILogger<TranslatorManagementController> _logger;
     private readonly ITranslationJobService _translationJobService;
     private readonly TranslationJobMapper _translationJobMapper;
+    private readonly IFileParsingProvider _jobParsingProvider;
 
-    public TranslationJobController(ILogger<TranslatorManagementController> logger, ITranslationJobService translationJobService, TranslationJobMapper translationJobMapper)
+    public TranslationJobController(ILogger<TranslatorManagementController> logger, ITranslationJobService translationJobService, TranslationJobMapper translationJobMapper, IFileParsingProvider jobParsingProvider)
     {
         _logger = logger;
         _translationJobService = translationJobService;
         _translationJobMapper = translationJobMapper;
+        _jobParsingProvider = jobParsingProvider;
     }
 
     [HttpGet]
@@ -50,28 +53,14 @@ public class TranslationJobController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<OkObjectResult> CreateJobWithFile(IFormFile file, string customer)
+    public async Task<IActionResult> CreateJobWithFile(IFormFile file, string customer)
     {
-        var reader = new StreamReader(file.OpenReadStream());
-        string content;
-
-        if (file.FileName.EndsWith(".txt"))
+        var createJobRequest = _jobParsingProvider.Parse(file, customer);
+        if (!createJobRequest.IsSuccess)
         {
-            content = reader.ReadToEnd();
+            return BadRequest(createJobRequest.FailReason);
         }
-        else if (file.FileName.EndsWith(".xml"))
-        {
-            var xdoc = XDocument.Parse(reader.ReadToEnd());
-            content = xdoc.Root.Element("Content").Value;
-            customer = xdoc.Root.Element("Customer").Value.Trim();
-        }
-        else
-        {
-            throw new NotSupportedException("unsupported file");
-        }
-
-        var createJobResult = await _translationJobService.CreateJob(new CreateJobCommand(customer, content));
-
+        var createJobResult = await _translationJobService.CreateJob(new CreateJobCommand(createJobRequest.CustomerName, createJobRequest.OriginalContent));
         return Ok(createJobResult.IsSuccess);
     }
 
