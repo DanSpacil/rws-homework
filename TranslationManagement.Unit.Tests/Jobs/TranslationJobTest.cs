@@ -16,7 +16,7 @@ public class TranslationJobTest
        var updateResult = translationJob.UpdateStatus(JobStatus.InProgress);
 
        // Assert
-       updateResult.IsUpdated.Should().BeTrue();
+       updateResult.IsSuccess.Should().BeTrue();
        translationJob.Status.Should().Be(JobStatus.InProgress);
     }
     
@@ -32,7 +32,7 @@ public class TranslationJobTest
        var updateResult = translationJob.UpdateStatus(newStatus);
 
        // Assert
-       updateResult.IsUpdated.Should().BeFalse();
+       updateResult.IsSuccess.Should().BeFalse();
        translationJob.Status.Should().Be(JobStatus.Completed);
     }
 }

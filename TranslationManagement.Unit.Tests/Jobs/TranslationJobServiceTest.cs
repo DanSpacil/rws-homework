@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Moq;
+using TranslationManagement.Api.FileParsing;
 using TranslationManagement.Api.Jobs;
 using TranslationManagement.Api.Jobs.Persistence;
 using TranslationManagement.Api.Notifications;
@@ -16,7 +17,8 @@ public class TranslationJobServiceTest
     {
         _repositoryMock = new Mock<ITranslationJobRepository>();
         var notifierMock = new Mock<INotifier>();
-        _sut = new TranslationJobService(notifierMock.Object,_repositoryMock.Object );
+        var parsingProviderMock = new Mock<IFileParsingProvider>();
+        _sut = new TranslationJobService(notifierMock.Object,_repositoryMock.Object, parsingProviderMock.Object );
     }
 
     [Fact]
@@ -31,7 +33,7 @@ public class TranslationJobServiceTest
        var updateResult = await _sut.UpdateJobStatus(updateCommand);
 
        //Assert
-       updateResult.IsUpdated.Should().BeFalse();
+       updateResult.IsSuccess.Should().BeFalse();
     }
     
     [Fact]
@@ -47,7 +49,7 @@ public class TranslationJobServiceTest
        var updateResult = await _sut.UpdateJobStatus(updateCommand);
 
        //Assert
-       updateResult.IsUpdated.Should().BeTrue();
+       updateResult.IsSuccess.Should().BeTrue();
        translationJob.Status.Should().Be(JobStatus.InProgress);
     }
 }

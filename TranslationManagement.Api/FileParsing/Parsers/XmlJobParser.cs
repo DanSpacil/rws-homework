@@ -3,6 +3,8 @@ using System.IO;
 using System.Xml.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using TranslationManagement.Api.Jobs;
+using TranslationManagement.Api.Workflow;
 
 namespace TranslationManagement.Api.FileParsing.Parsers;
 
@@ -17,21 +19,23 @@ public class XmlJobParser : IJobParser
     }
 
 
-    public ParseJobResult Parse(IFormFile file, string customer)
+    public Result<CreateJobRequest> Parse(IFormFile file, string customer)
     {
         try
         {
             using var streamReader = new StreamReader(file.OpenReadStream());
             var xdoc = XDocument.Parse(streamReader.ReadToEnd());
-            var content = xdoc.Root.Element("Content").Value;
-            var customerName = xdoc.Root.Element("Customer").Value.Trim();
-            return ParseJobResult.Success(customerName, content);
+            var request = new CreateJobRequest
+            {
+                CustomerName = xdoc.Root.Element("Content").Value,
+                OriginalContent = xdoc.Root.Element("Customer").Value.Trim()
+            };
+            return Result<CreateJobRequest>.Success(request);
         }
         catch (Exception _)
         {
             _logger.LogTrace("Exception during XML parsing");
-            return ParseJobResult.Error("Unable to process XML content");
+            return Result<CreateJobRequest>.Error("Unable to process XML content");
         }
     }
-
-    }
+}

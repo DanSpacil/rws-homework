@@ -2,6 +2,8 @@
 using System.IO;
 using Microsoft.AspNetCore.Http;
 using TranslationManagement.Api.FileParsing.Parsers;
+using TranslationManagement.Api.Jobs;
+using TranslationManagement.Api.Workflow;
 
 namespace TranslationManagement.Api.FileParsing;
 
@@ -14,13 +16,13 @@ public class JobParsingProvider : IFileParsingProvider
         _parsers = parsers;
     }
 
-    public ParseJobResult Parse(IFormFile file, string customer)
+    public Result<CreateJobRequest> Parse(IFormFile file, string customer)
     {
         var sanitizedFileExtension = Path.GetExtension(file.FileName).ToLower().Trim('.');
         var canParse = _parsers.TryGetValue(sanitizedFileExtension, out var parser);
         if (!canParse)
         {
-            return ParseJobResult.Error("Unable to parse file");
+            return Result<CreateJobRequest>.Error("Unable to parse file");
         }
 
         return parser.Parse(file, customer);

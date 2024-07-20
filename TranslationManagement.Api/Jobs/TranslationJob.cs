@@ -1,3 +1,5 @@
+using TranslationManagement.Api.Workflow;
+
 namespace TranslationManagement.Api.Jobs;
 
 public class TranslationJob
@@ -15,16 +17,16 @@ public class TranslationJob
         this.Price = this.OriginalContent.Length * pricePerCharacter;
     }
 
-    public JobStatusUpdateResult UpdateStatus(JobStatus newStatus)
+    public Result<bool> UpdateStatus(JobStatus newStatus)
     {
         if ((this.Status == JobStatus.New && newStatus == JobStatus.Completed) ||
             this.Status == JobStatus.Completed ||
             newStatus == JobStatus.New)
         {
-            return JobStatusUpdateResult.Invalid();
+            return Result<bool>.Error("Invalid status transition");
         }
 
         this.Status = newStatus;
-        return JobStatusUpdateResult.Success();
+        return Result<bool>.Success(true);
     }
 }

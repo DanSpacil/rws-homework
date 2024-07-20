@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using TranslationManagement.Api.FileParsing;
 using TranslationManagement.Api.Http;
 using TranslationManagement.Api.Translators;
 
@@ -13,14 +12,12 @@ public class TranslationJobController : ApiController
     private readonly ILogger<TranslatorController> _logger;
     private readonly ITranslationJobService _translationJobService;
     private readonly TranslationJobMapper _translationJobMapper;
-    private readonly IFileParsingProvider _jobParsingProvider;
 
-    public TranslationJobController(ILogger<TranslatorController> logger, ITranslationJobService translationJobService, TranslationJobMapper translationJobMapper, IFileParsingProvider jobParsingProvider)
+    public TranslationJobController(ILogger<TranslatorController> logger, ITranslationJobService translationJobService, TranslationJobMapper translationJobMapper)
     {
         _logger = logger;
         _translationJobService = translationJobService;
         _translationJobMapper = translationJobMapper;
-        _jobParsingProvider = jobParsingProvider;
     }
 
     [HttpGet]
@@ -40,12 +37,7 @@ public class TranslationJobController : ApiController
     [HttpPost]
     public async Task<IActionResult> CreateJobWithFile(IFormFile file, string customer)
     {
-        var createJobRequest = _jobParsingProvider.Parse(file, customer);
-        if (!createJobRequest.IsSuccess)
-        {
-            return BadRequest(createJobRequest.FailReason);
-        }
-        var createJobResult = await _translationJobService.CreateJob(new CreateJobCommand(createJobRequest.CustomerName, createJobRequest.OriginalContent));
+        var createJobResult = await _translationJobService.CreateJobFromFile(file, customer);
         return Ok(createJobResult.IsSuccess);
     }
 
@@ -54,6 +46,6 @@ public class TranslationJobController : ApiController
     {
         _logger.LogInformation("Job status update request received: {NewJobStatus} for job {JobId} by translator {TranslatorId}", newStatus, jobId, translatorId);
         var updateResult = await this._translationJobService.UpdateJobStatus(new JobStatusUpdateCommand(jobId, newStatus));
-        return updateResult.IsUpdated ? Ok("update") : BadRequest("invalid status");
+        return updateResult.IsSuccess ? Ok("update") : BadRequest("invalid status");
     }
 }
