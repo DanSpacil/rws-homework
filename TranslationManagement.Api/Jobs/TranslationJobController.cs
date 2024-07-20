@@ -1,19 +1,14 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using External.ThirdParty.Services;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using TranslationManagement.Api.FileParsing;
+using TranslationManagement.Api.Http;
 using TranslationManagement.Api.Translators;
 
 namespace TranslationManagement.Api.Jobs;
 
-[ApiController]
-[Route("api/jobs/[action]")]
-public class TranslationJobController : ControllerBase
+public class TranslationJobController : ApiController
 {
     private readonly ILogger<TranslatorManagementController> _logger;
     private readonly ITranslationJobService _translationJobService;
@@ -39,16 +34,6 @@ public class TranslationJobController : ControllerBase
     public async Task<OkObjectResult> CreateJob(CreateJobRequest createJobRequest)
     {
         var createJobResult = await _translationJobService.CreateJob(new CreateJobCommand(createJobRequest.CustomerName, createJobRequest.OriginalContent));
-        if (createJobResult.IsSuccess)
-        {
-            var notificationSvc = new UnreliableNotificationService();
-            while (!notificationSvc.SendNotification("Job created: " + createJobResult.JobId).Result)
-            {
-            }
-
-            _logger.LogInformation("New job notification sent");
-        }
-
         return Ok(createJobResult.IsSuccess);
     }
 
@@ -75,10 +60,4 @@ public class TranslationJobController : ControllerBase
         var updateResult = await this._translationJobService.UpdateJobStatus(new JobStatusUpdateCommand(jobId, newStatus));
         return updateResult.IsUpdated ? "update" : "invalid status";
     }
-}
-
-public class CreateJobRequest
-{
-    public string CustomerName { get; set; }
-    public string OriginalContent { get; set; }
 }

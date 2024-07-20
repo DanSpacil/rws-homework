@@ -2,27 +2,23 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using TranslationManagement.Api.Http;
 using TranslationManagement.Api.Persistence;
 
 namespace TranslationManagement.Api.Translators;
 
-[ApiController]
-[Route("api/TranslatorsManagement/[action]")]
-public class TranslatorManagementController : ControllerBase
+public class TranslatorManagementController : ApiController
 {
     public static readonly string[] TranslatorStatuses = { "Applicant", "Certified", "Deleted" };
 
     private readonly ILogger<TranslatorManagementController> _logger;
-    private AppDbContext _context;
 
     private readonly ITranslatorService _translatorService;
     private readonly TranslatorMapper _translatorMapper;
 
-    public TranslatorManagementController(IServiceScopeFactory scopeFactory, ILogger<TranslatorManagementController> logger, ITranslatorService translatorService, TranslatorMapper translatorMapper)
+    public TranslatorManagementController(ILogger<TranslatorManagementController> logger, ITranslatorService translatorService, TranslatorMapper translatorMapper)
     {
-        _context = scopeFactory.CreateScope().ServiceProvider.GetService<AppDbContext>();
         _logger = logger;
         _translatorService = translatorService;
         _translatorMapper = translatorMapper;

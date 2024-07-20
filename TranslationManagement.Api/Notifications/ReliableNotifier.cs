@@ -28,6 +28,7 @@ public class ReliableNotifier : INotifier
                 if (wasSendSuccessful)
                 {
                     shouldRetry = false;
+                    _logger.LogInformation("New job notification sent");
                 }
             }
             catch (ApplicationException e)
