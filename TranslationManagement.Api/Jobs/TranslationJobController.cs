@@ -13,7 +13,8 @@ public class TranslationJobController : ApiController
     private readonly ITranslationJobService _translationJobService;
     private readonly TranslationJobMapper _translationJobMapper;
 
-    public TranslationJobController(ILogger<TranslatorController> logger, ITranslationJobService translationJobService, TranslationJobMapper translationJobMapper)
+    public TranslationJobController(ILogger<TranslatorController> logger, ITranslationJobService translationJobService,
+        TranslationJobMapper translationJobMapper)
     {
         _logger = logger;
         _translationJobService = translationJobService;
@@ -30,7 +31,9 @@ public class TranslationJobController : ApiController
     [HttpPost]
     public async Task<IActionResult> CreateJob(CreateJobRequest createJobRequest)
     {
-        var createJobResult = await _translationJobService.CreateJob(new CreateJobCommand(createJobRequest.CustomerName, createJobRequest.OriginalContent));
+        var createJobResult =
+            await _translationJobService.CreateJob(new CreateJobCommand(createJobRequest.CustomerName,
+                createJobRequest.OriginalContent));
         return Ok(createJobResult.IsSuccess);
     }
 
@@ -44,8 +47,10 @@ public class TranslationJobController : ApiController
     [HttpPost]
     public async Task<IActionResult> UpdateJobStatus(int jobId, int translatorId, JobStatus newStatus)
     {
-        _logger.LogInformation("Job status update request received: {NewJobStatus} for job {JobId} by translator {TranslatorId}", newStatus, jobId, translatorId);
-        var updateResult = await this._translationJobService.UpdateJobStatus(new JobStatusUpdateCommand(jobId, newStatus));
+        _logger.LogInformation(
+            "Job status update request received: {NewJobStatus} for job {JobId} by translator {TranslatorId}",
+            newStatus, jobId, translatorId);
+        var updateResult = await _translationJobService.UpdateJobStatus(new JobStatusUpdateCommand(jobId, newStatus));
         return updateResult.IsSuccess ? Ok("update") : BadRequest("invalid status");
     }
 }

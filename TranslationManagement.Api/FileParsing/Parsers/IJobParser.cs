@@ -7,6 +7,6 @@ namespace TranslationManagement.Api.FileParsing.Parsers;
 public interface IJobParser
 {
     string SupportedFileType { get; }
-    
+
     Result<CreateJobRequest> Parse(IFormFile file, string customer);
 }

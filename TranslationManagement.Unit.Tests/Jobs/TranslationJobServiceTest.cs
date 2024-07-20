@@ -18,38 +18,38 @@ public class TranslationJobServiceTest
         _repositoryMock = new Mock<ITranslationJobRepository>();
         var notifierMock = new Mock<INotifier>();
         var parsingProviderMock = new Mock<IFileParsingProvider>();
-        _sut = new TranslationJobService(notifierMock.Object,_repositoryMock.Object, parsingProviderMock.Object );
+        _sut = new TranslationJobService(notifierMock.Object, _repositoryMock.Object, parsingProviderMock.Object);
     }
 
     [Fact]
     public async Task UpdateJobStatus_InvalidJob_ReturnsErrorResult()
     {
-       // Arrange
-       var updateCommand = new JobStatusUpdateCommand(1, JobStatus.New);
-       _repositoryMock.Setup(m => m.GetJobById(It.IsAny<int>()))
-           .ReturnsAsync((int _) => null);
-       
-       //Act
-       var updateResult = await _sut.UpdateJobStatus(updateCommand);
+        // Arrange
+        var updateCommand = new JobStatusUpdateCommand(1, JobStatus.New);
+        _repositoryMock.Setup(m => m.GetJobById(It.IsAny<int>()))
+            .ReturnsAsync((int _) => null);
 
-       //Assert
-       updateResult.IsSuccess.Should().BeFalse();
+        //Act
+        var updateResult = await _sut.UpdateJobStatus(updateCommand);
+
+        //Assert
+        updateResult.IsSuccess.Should().BeFalse();
     }
-    
+
     [Fact]
     public async Task UpdateJobStatus_ValidJob_UpdatesStatus()
     {
-       // Arrange
-       var updateCommand = new JobStatusUpdateCommand(1, JobStatus.InProgress);
-       var translationJob = new TranslationJob(){ Status = JobStatus.New };
-       _repositoryMock.Setup(m => m.GetJobById(It.IsAny<int>()))
-           .ReturnsAsync((int _) => translationJob);
-       
-       //Act
-       var updateResult = await _sut.UpdateJobStatus(updateCommand);
+        // Arrange
+        var updateCommand = new JobStatusUpdateCommand(1, JobStatus.InProgress);
+        var translationJob = new TranslationJob() { Status = JobStatus.New };
+        _repositoryMock.Setup(m => m.GetJobById(It.IsAny<int>()))
+            .ReturnsAsync((int _) => translationJob);
 
-       //Assert
-       updateResult.IsSuccess.Should().BeTrue();
-       translationJob.Status.Should().Be(JobStatus.InProgress);
+        //Act
+        var updateResult = await _sut.UpdateJobStatus(updateCommand);
+
+        //Assert
+        updateResult.IsSuccess.Should().BeTrue();
+        translationJob.Status.Should().Be(JobStatus.InProgress);
     }
 }

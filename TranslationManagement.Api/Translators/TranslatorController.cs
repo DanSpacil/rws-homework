@@ -7,12 +7,12 @@ namespace TranslationManagement.Api.Translators;
 
 public class TranslatorController : ApiController
 {
-
     private readonly ILogger<TranslatorController> _logger;
     private readonly ITranslatorService _translatorService;
     private readonly TranslatorMapper _translatorMapper;
 
-    public TranslatorController(ILogger<TranslatorController> logger, ITranslatorService translatorService, TranslatorMapper translatorMapper)
+    public TranslatorController(ILogger<TranslatorController> logger, ITranslatorService translatorService,
+        TranslatorMapper translatorMapper)
     {
         _logger = logger;
         _translatorService = translatorService;
@@ -23,14 +23,14 @@ public class TranslatorController : ApiController
     public async Task<IActionResult> GetTranslators()
     {
         var translators = await _translatorService.GetAllTranslators();
-        return this.Ok(_translatorMapper.Map(translators));
+        return Ok(_translatorMapper.Map(translators));
     }
 
     [HttpGet]
     public async Task<IActionResult> GetTranslatorsByName(string name)
     {
         var translators = await _translatorService.GetByName(name);
-        return this.Ok(_translatorMapper.Map(translators));
+        return Ok(_translatorMapper.Map(translators));
     }
 
     [HttpPost]
@@ -43,7 +43,8 @@ public class TranslatorController : ApiController
     [HttpPost]
     public async Task<IActionResult> UpdateTranslatorStatus(int translatorId, TranslatorStatus newStatus)
     {
-        _logger.LogInformation("User status update request: {NewTranslatorStatus} for user {TranslatorId}", newStatus, translatorId);
+        _logger.LogInformation("User status update request: {NewTranslatorStatus} for user {TranslatorId}", newStatus,
+            translatorId);
         await _translatorService.UpdateTranslatorStatus(translatorId, newStatus);
         return Ok("updated");
     }

@@ -16,7 +16,8 @@ public class TranslationJobService : ITranslationJobService
 
     private const double PricePerCharacter = 0.01;
 
-    public TranslationJobService(INotifier notifier, ITranslationJobRepository translationJobRepository, IFileParsingProvider jobParsingProvider)
+    public TranslationJobService(INotifier notifier, ITranslationJobRepository translationJobRepository,
+        IFileParsingProvider jobParsingProvider)
     {
         _notifier = notifier;
         _translationJobRepository = translationJobRepository;
@@ -50,7 +51,7 @@ public class TranslationJobService : ITranslationJobService
 
     public async Task<Result<bool>> UpdateJobStatus(JobStatusUpdateCommand jobStatusUpdateCommand)
     {
-        var job = await _translationJobRepository.GetJobById(jobStatusUpdateCommand.JobId); 
+        var job = await _translationJobRepository.GetJobById(jobStatusUpdateCommand.JobId);
         if (job is null)
         {
             return Result<bool>.Error("Job for given id not found");
@@ -72,6 +73,8 @@ public class TranslationJobService : ITranslationJobService
         {
             return Result<JobCreated>.Error(createJobRequest.FailReason);
         }
-        return await CreateJob(new CreateJobCommand(createJobRequest.Data.CustomerName, createJobRequest.Data.OriginalContent));
+
+        return await CreateJob(new CreateJobCommand(createJobRequest.Data.CustomerName,
+            createJobRequest.Data.OriginalContent));
     }
 }

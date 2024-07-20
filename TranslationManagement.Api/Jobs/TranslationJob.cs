@@ -14,19 +14,19 @@ public class TranslationJob
 
     public void SetPrice(double pricePerCharacter)
     {
-        this.Price = this.OriginalContent.Length * pricePerCharacter;
+        Price = OriginalContent.Length * pricePerCharacter;
     }
 
     public Result<bool> UpdateStatus(JobStatus newStatus)
     {
-        if ((this.Status == JobStatus.New && newStatus == JobStatus.Completed) ||
-            this.Status == JobStatus.Completed ||
+        if ((Status == JobStatus.New && newStatus == JobStatus.Completed) ||
+            Status == JobStatus.Completed ||
             newStatus == JobStatus.New)
         {
             return Result<bool>.Error("Invalid status transition");
         }
 
-        this.Status = newStatus;
+        Status = newStatus;
         return Result<bool>.Success(true);
     }
 }
