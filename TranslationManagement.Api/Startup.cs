@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using TranslationManagement.Api.Jobs;
+using TranslationManagement.Api.Notifications;
 using TranslationManagement.Api.Persistence;
 using TranslationManagement.Api.Translators;
 
@@ -32,6 +33,7 @@ public class Startup
 
         services.AddTranslators();
         services.AddTranslationJobs();
+        services.AddNotifications();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
