@@ -31,9 +31,9 @@ public class TranslatorService : ITranslatorService
         return await _appContext.SaveChangesAsync() > 0;
     }
 
-    public async Task UpdateTranslatorStatus(int translator, TranslatorStatus newStatus)
+    public async Task UpdateTranslatorStatus(int translatorId, TranslatorStatus newStatus)
     {
-        var job = _appContext.Translators.Single(j => j.Id == translator);
+        var job = _appContext.Translators.Single(j => j.Id == translatorId);
         job.Status = newStatus;
         await _appContext.SaveChangesAsync();
     }

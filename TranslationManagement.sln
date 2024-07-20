@@ -21,6 +21,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SampleData", "SampleData", 
 		job.xml = job.xml
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{367AFAE7-7005-463E-BD06-4849D339C27B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TranslationManagement.Unit.Tests", "TranslationManagement.Unit.Tests\TranslationManagement.Unit.Tests.csproj", "{03A9A7F1-4FBD-4024-8EDA-2157BE530003}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,11 +39,18 @@ Global
 		{173F3433-4139-404D-A843-BAF43F6164FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{173F3433-4139-404D-A843-BAF43F6164FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{173F3433-4139-404D-A843-BAF43F6164FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03A9A7F1-4FBD-4024-8EDA-2157BE530003}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03A9A7F1-4FBD-4024-8EDA-2157BE530003}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03A9A7F1-4FBD-4024-8EDA-2157BE530003}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03A9A7F1-4FBD-4024-8EDA-2157BE530003}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {821E39E6-0BB8-498C-9510-D913968AA6FF}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{03A9A7F1-4FBD-4024-8EDA-2157BE530003} = {367AFAE7-7005-463E-BD06-4849D339C27B}
 	EndGlobalSection
 EndGlobal

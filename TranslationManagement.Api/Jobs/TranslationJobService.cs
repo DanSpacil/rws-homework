@@ -1,27 +1,26 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+using TranslationManagement.Api.Jobs.Persistence;
 using TranslationManagement.Api.Notifications;
-using TranslationManagement.Api.Persistence;
 
 namespace TranslationManagement.Api.Jobs;
 
 public class TranslationJobService : ITranslationJobService
 {
-    private readonly AppDbContext _appContext;
+    private readonly ITranslationJobRepository _translationJobRepository;
     private readonly INotifier _notifier;
 
     private const double PricePerCharacter = 0.01;
 
-    public TranslationJobService(AppDbContext appContext, INotifier notifier)
+    public TranslationJobService(INotifier notifier, ITranslationJobRepository translationJobRepository)
     {
-        _appContext = appContext;
         _notifier = notifier;
+        _translationJobRepository = translationJobRepository;
     }
 
     public async Task<IEnumerable<TranslationJob>> GetAll()
     {
-        return await _appContext.TranslationJobs.ToListAsync();
+        return await _translationJobRepository.GetAllJobs();
     }
 
     public async Task<JobCreatedResult> CreateJob(CreateJobCommand createJobCommand)
@@ -33,21 +32,20 @@ public class TranslationJobService : ITranslationJobService
             OriginalContent = createJobCommand.OriginalContent
         };
         job.SetPrice(PricePerCharacter);
-        var entity = await _appContext.TranslationJobs.AddAsync(job);
-        var saveResult = await _appContext.SaveChangesAsync();
+        var entity = await _translationJobRepository.AddJob(job);
+        var saveResult = await _translationJobRepository.SaveChangesAsync();
         if (saveResult == 0)
         {
             return JobCreatedResult.Error();
         }
 
         await _notifier.Notify(new JobCreatedNotification(job.Id));
-        return JobCreatedResult.Success(entity.Entity.Id);
+        return JobCreatedResult.Success(entity.Id);
     }
 
     public async Task<JobStatusUpdateResult> UpdateJobStatus(JobStatusUpdateCommand jobStatusUpdateCommand)
     {
-        var job = await _appContext.TranslationJobs
-            .FirstOrDefaultAsync(j => j.Id == jobStatusUpdateCommand.JobId);
+        var job = await _translationJobRepository.GetJobById(jobStatusUpdateCommand.JobId); 
         if (job is null)
         {
             return JobStatusUpdateResult.Invalid();
@@ -56,7 +54,7 @@ public class TranslationJobService : ITranslationJobService
         var updateResult = job.UpdateStatus(jobStatusUpdateCommand.NewStatus);
         if (updateResult.IsUpdated)
         {
-            await _appContext.SaveChangesAsync();
+            await _translationJobRepository.SaveChangesAsync();
         }
 
         return updateResult;
