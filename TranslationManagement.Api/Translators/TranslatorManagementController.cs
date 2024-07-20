@@ -1,19 +1,14 @@
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using TranslationManagement.Api.Http;
-using TranslationManagement.Api.Persistence;
 
 namespace TranslationManagement.Api.Translators;
 
 public class TranslatorManagementController : ApiController
 {
-    public static readonly string[] TranslatorStatuses = { "Applicant", "Certified", "Deleted" };
 
     private readonly ILogger<TranslatorManagementController> _logger;
-
     private readonly ITranslatorService _translatorService;
     private readonly TranslatorMapper _translatorMapper;
 
@@ -46,15 +41,10 @@ public class TranslatorManagementController : ApiController
     }
 
     [HttpPost]
-    public async Task<string> UpdateTranslatorStatus(int Translator, string newStatus = "")
+    public async Task<string> UpdateTranslatorStatus(int translatorId, TranslatorStatus newStatus)
     {
-        _logger.LogInformation("User status update request: " + newStatus + " for user " + Translator.ToString());
-        if (TranslatorStatuses.Where(status => status == newStatus).Count() == 0)
-        {
-            throw new ArgumentException("unknown status");
-        }
-
-        await _translatorService.UpdateTranslatorStatus(Translator, newStatus);
+        _logger.LogInformation("User status update request: {@NewTranslatorStatus} for user {@TranslatorId}", newStatus, translatorId);
+        await _translatorService.UpdateTranslatorStatus(translatorId, newStatus);
         return "updated";
     }
 }

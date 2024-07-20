@@ -4,7 +4,7 @@ using System.Xml.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace TranslationManagement.Api.FileParsing;
+namespace TranslationManagement.Api.FileParsing.Parsers;
 
 public class XmlJobParser : IJobParser
 {

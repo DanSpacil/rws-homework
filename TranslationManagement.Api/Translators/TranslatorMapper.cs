@@ -7,7 +7,7 @@ public class TranslatorMapper
 {
     public IEnumerable<TranslatorGetModel> Map(IEnumerable<TranslatorModel> translators)
     {
-        return translators.Select(t => Map((TranslatorModel)t));
+        return translators.Select(t => Map(t));
     }
 
     public TranslatorGetModel Map(TranslatorModel translator)

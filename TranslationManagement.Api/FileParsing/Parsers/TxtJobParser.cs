@@ -3,14 +3,14 @@ using System.IO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace TranslationManagement.Api.FileParsing;
+namespace TranslationManagement.Api.FileParsing.Parsers;
 
-public class TxtParser : IJobParser
+public class TxtJobParser : IJobParser
 {
     public string SupportedFileType => "txt";
-    private readonly ILogger<TxtParser> _logger;
+    private readonly ILogger<TxtJobParser> _logger;
 
-    public TxtParser(ILogger<TxtParser> logger)
+    public TxtJobParser(ILogger<TxtJobParser> logger)
     {
         _logger = logger;
     }

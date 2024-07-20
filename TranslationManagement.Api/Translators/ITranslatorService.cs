@@ -11,5 +11,5 @@ public interface ITranslatorService
 
     Task<bool> AddTranslator(TranslatorModel translator);
 
-    Task UpdateTranslatorStatus(int translator, string newStatus);
+    Task UpdateTranslatorStatus(int translator, TranslatorStatus newStatus);
 }

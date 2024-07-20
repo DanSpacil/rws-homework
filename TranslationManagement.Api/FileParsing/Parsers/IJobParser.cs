@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace TranslationManagement.Api.FileParsing;
+namespace TranslationManagement.Api.FileParsing.Parsers;
 
 public interface IJobParser
 {
