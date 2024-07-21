@@ -1,3 +1,27 @@
+# Solution details
+Hello there, this is my attempt at improving the POC for translator work.
+API was refactored to reduce the burden on controllers and for it to be extensible in the long run. As instructed I mostly didn't touch cross-cutting-concerns like logging, global exception handling, etc.
+Tests 
+I've added a couple of unit tests to show how I generally write them. I deemed some of the parts not worth testing specifically since they are rather simple (Controllers, Repository) or have simple logic where it wouldn't give much in return for this homework assignment.
+
+Client is a very simple CRA that allows adding a new translator and showing a available list. The page must be refreshed manually to show the changes, I didn't add a context or events to not complicate things
+
+
+## How to run
+Server
+```
+dotnet run dotnet run .\src\server\TranslationManagement.Api\TranslationManagement.Api.csproj
+```
+
+```
+Client
+```
+cd .\src\client
+npm install
+npm start
+```
+
+
 # Project description
 This app should help us manage translators and jobs they work on. 
 It is currently a working proof of concept but it needs a bit of polishing and a couple of features. 
