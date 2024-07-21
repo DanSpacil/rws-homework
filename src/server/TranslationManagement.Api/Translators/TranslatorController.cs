@@ -34,8 +34,10 @@ public class TranslatorController : ApiController
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddTranslator(TranslatorModel translator)
+    //TODO: Change to TranslatorPostModel
+    public async Task<IActionResult> AddTranslator(TranslatorPostModel translatorPostModel)
     {
+        var translator = _translatorMapper.Map(translatorPostModel);
         var translatorAdded = await _translatorService.AddTranslator(translator);
         return Ok(translatorAdded);
     }
@@ -48,4 +50,15 @@ public class TranslatorController : ApiController
         await _translatorService.UpdateTranslatorStatus(translatorId, newStatus);
         return Ok("updated");
     }
+}
+
+public record TranslatorPostModel
+{
+    public string Name { get; set; }
+    
+    public string HourlyRate { get; set; }
+    
+    public TranslatorStatus Status { get; set; }
+    
+    public string CreditCardNumber { get; set; }
 }

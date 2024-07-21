@@ -21,4 +21,15 @@ public class TranslatorMapper
             CreditCardNumber = translator.CreditCardNumber
         };
     }
+
+    public TranslatorModel Map(TranslatorPostModel translator)
+    {
+        return new TranslatorModel()
+        {
+            Name = translator.Name,
+            HourlyRate = translator.HourlyRate,
+            Status = translator.Status,
+            CreditCardNumber = translator.CreditCardNumber
+        };
+    }
 }
